@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ToDoリスト</title>
+  <script src="http://fb.me/react-with-addons-0.12.2.js"></script>
+  <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
+</head>
+<body>
+  <div id="mayApp"></div>
+
+  <script type="text/jsx">
+
+  //ToDoAppコンポーネント ----------------------------------------------------
+  // renderメソッド（全体を描画させる定義）
+  var TodoApp = React.createClass({
+    //TodoList初期値
+    getInitialState: function() {
+      return {
+        todos: []
+      }
+    },
+
+    onAdd: function(newTodo) {
+      this.setState({
+        todos: this.state.todos.concat({item:newTodo, status:0})
+      });
+    },
+
+    // onDeleteを定義
+    onDelete: function(i) {
+      var targetTodo = this.state.todos[i];
+      targetTodo.status = 1;
+      this.setState({
+          todos: this.state.todos
+      });
+    },
+
+    render: function(){
+      return (
+        <div className="TodoApp">
+          <TodoCreator onAdd={this.onAdd}/>
+          <TodoList todos={this.state.todos} onDelete={this.onDelete}/>
+        </div>
+      );
+    }
+  });
+
+  //TodoCreatorコンポーネント ----------------------------------------------------
+  var TodoCreator = React.createClass({
+    //valueを定義
+    getInitialState: function() {
+      return {
+        value: ""
+      }
+    },
+
+    //ボタンがクリックされたらinputの値を返す
+    _onAdd: function() {
+      var newTodo = this.refs.inputText.getDOMNode().value;
+      this.props.onAdd(newTodo);
+      this.setState({value: ""});
+    },
+
+    //inputの値が変更されたらvalue変数を更新、nullにもどす
+    _onChange: function(e) {
+      this.setState({
+        value: e.target.value
+      });
+    },
+
+    //ボタンが押されたら_onAddメソッドを呼んでinputText内の値を取得し、newTodoに格納
+    render: function() {
+      return (
+        <div className="TodoCreator">
+          <input type="text" ref="inputText" placeholder="Input your new todo" onChange={this._onChange} />
+          <button onClick={this._onAdd}>Add</button>
+        </div>
+      );
+    }
+  });
+
+  //TodoListコンポーネント ---------------------------------------------------
+  var TodoList = React.createClass({
+    // 完了した状態を定義
+    _onDelete: function(i) {
+      this.props.onDelete(i);
+    },
+
+    //Todoのステータス管理
+    render: function() {
+      return (
+        <ul>
+        {
+          this.props.todos.map(function(todo, i){
+            if (todo.status == 0) {
+              //登録直後の状態
+              return (
+                <li key={i}>
+                  <input type="checkbox" onClick={this._onDelete.bind(this,i)}/>{todo.item}</li>
+              )
+            } else {
+              //完了した状態
+              return <li key={i}><s>{todo.item}</s></li>
+            }
+          },this)
+        }
+      );
+    }
+  });
+
+
+  //render（実際に描画させる）
+  React.render(
+    <TodoApp/>,
+    document.getElementById('myApp')
+  );
+
+  </script>
+
+</body>
+</html>
