@@ -9,7 +9,7 @@
   <script src="http://fb.me/JSXTransformer-0.12.2.js"></script>
 </head>
 <body>
-  <div id="mayApp"></div>
+  <div id="myApp"></div>
 
   <script type="text/jsx">
 
@@ -75,7 +75,7 @@
     render: function() {
       return (
         <div className="TodoCreator">
-          <input type="text" ref="inputText" placeholder="Input your new todo" onChange={this._onChange} />
+          <input type="text" value={this.state.value} ref="inputText" placeholder="Input your new todo" onChange={this._onChange}/>
           <button onClick={this._onAdd}>Add</button>
         </div>
       );
@@ -94,12 +94,11 @@
       return (
         <ul>
         {
-          this.props.todos.map(function(todo, i){
+          this.props.todos.map(function(todo,i){
             if (todo.status == 0) {
               //登録直後の状態
               return (
-                <li key={i}>
-                  <input type="checkbox" onClick={this._onDelete.bind(this,i)}/>{todo.item}</li>
+                <li key={i}><input type="checkbox" onClick={this._onDelete.bind(this,i)}/>{todo.item}</li>
               )
             } else {
               //完了した状態
@@ -107,10 +106,10 @@
             }
           },this)
         }
+        </ul>
       );
     }
   });
-
 
   //render（実際に描画させる）
   React.render(
